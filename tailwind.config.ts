@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      backgroundImage: {
+        noise: "url('/public/noise.svg')",
+      },
       colors: {
         mainbg: "hsl(var(--mainbgcolor))",
         border: "hsl(var(--border))",
