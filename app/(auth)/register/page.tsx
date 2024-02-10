@@ -1,9 +1,9 @@
+import Form from "@/components/Form";
 import React from "react";
-import Form from "@/components/NoiseInput";
 const Register = () => {
   return (
     <div>
-      <Form />
+      <Form type="register" />
     </div>
   );
 };
