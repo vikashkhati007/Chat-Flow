@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
+import Provider from "@/components/Provider";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -35,7 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Provider>{children}</Provider>
         </ThemeProvider>
       </body>
     </html>

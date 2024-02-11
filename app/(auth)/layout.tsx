@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-
+import { Toaster } from "@/components/ui/toaster";
+import Provider from "@/components/Provider";
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
 export const metadata: Metadata = {
@@ -27,7 +28,10 @@ export default function Layout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("bg-[#00072B]", poppins.className)}>{children}</body>
+      <body className={cn("bg-[#00072B]", poppins.className)}>
+        <Provider>{children}</Provider>
+        <Toaster />
+      </body>
     </html>
   );
 }

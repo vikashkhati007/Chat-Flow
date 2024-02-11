@@ -7,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { signIn } from "next-auth/react";
 
 type Inputs = {
   username: string;
@@ -28,6 +30,7 @@ const Form = ({ type }: any) => {
   } = useForm<Inputs>();
 
   const router = useRouter();
+  const { toast } = useToast();
 
   const onSubmit = async (data: any) => {
     if (type === "register") {
@@ -40,9 +43,28 @@ const Form = ({ type }: any) => {
       });
       if (res.ok) {
         router.push("/");
+        toast({
+          title: "Your Account is Succesfully Created",
+        });
       }
       if (res.status === 400) {
-        console.log("User Already Existed");
+        toast({
+          title: "Email is already in use",
+        });
+      }
+    }
+    if (type === "login") {
+      const res = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+      if (res?.ok) {
+        router.push("/chats");
+      }
+      if (res?.error) {
+        toast({
+          title: "Invalid Email or Password",
+        });
       }
     }
   };
@@ -157,6 +179,16 @@ const Form = ({ type }: any) => {
             <div className="relative overflow-hidden rounded-md flex justify-start items-center">
               <Mail className="text-white absolute mx-2" />
               <NoiseInput
+                val={{
+                  ...register("email", {
+                    required: "Email is Required",
+                    validate: (value) => {
+                      if (value.length < 3) {
+                        return "Email must be atleast 3 charater";
+                      }
+                    },
+                  }),
+                }}
                 placeholder="Enter your email"
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -170,6 +202,16 @@ const Form = ({ type }: any) => {
               <Key className="text-white absolute mx-2 " />
 
               <NoiseInput
+                val={{
+                  ...register("password", {
+                    required: "Password is Required",
+                    validate: (value) => {
+                      if (value.length < 3) {
+                        return "Password must be atleast 3 charater";
+                      }
+                    },
+                  }),
+                }}
                 placeholder="Enter your Password"
                 onChange={(e) => {
                   setPassword(e.target.value);
