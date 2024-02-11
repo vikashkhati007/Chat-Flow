@@ -1,6 +1,8 @@
 export interface NewUserProps {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+  data: {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  };
 }
