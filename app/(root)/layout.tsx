@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import Provider from "@/components/Provider";
+import TopBar from "@/components/TopBar";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -36,7 +37,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Provider>{children}</Provider>
+          <Provider>
+            <TopBar />
+            {children}
+          </Provider>
         </ThemeProvider>
       </body>
     </html>
