@@ -1,16 +1,27 @@
-import mongoose from "mongoose";
+import mongoose, { ConnectOptions } from "mongoose";
 
 let isConnected = false;
 
 export const connectToDB = async () => {
   mongoose.set("strictQuery", true);
+
   if (isConnected) {
-    console.log("Database is Already Connected");
+    console.log("MongoDB is already connected");
+    return;
   }
+
+  // ...
+
   try {
-    await mongoose.connect(`${process.env.MONGODB_URL}`);
+    await mongoose.connect(`${process.env.MONGODB_URL}`, {
+      dbName: "HaloChat",
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    } as ConnectOptions); // Add 'as ConnectOptions' to fix the type error
+
     isConnected = true;
-    console.log("Database is Connected");
+
+    console.log("MongoDB is connected successfully");
   } catch (error) {
     console.log(error);
   }

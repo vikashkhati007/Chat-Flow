@@ -5,14 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { useForm } from "react-hook-form";
 
 const TopBar = () => {
   const pathname = usePathname();
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/login" });
-  };
 
+  const handleLogout = async () => {
+    signOut({ callbackUrl: "/" });
+  };
   const { data: session } = useSession();
   const user = session?.user;
 
@@ -27,9 +26,7 @@ const TopBar = () => {
           <h1 className="text-xl font-semibold">Chat Flow</h1>
         </Link>
         <ul className="menu flex gap-5 justify-center items-center font-semibold">
-          <button typeof="button" onClick={handleLogout}>
-            <LogOut />
-          </button>
+          <LogOut onClick={handleLogout} />
           <Link href={"/chats"}>
             <li className={pathname === "/chats" ? "text-blue-500" : ""}>
               Chats

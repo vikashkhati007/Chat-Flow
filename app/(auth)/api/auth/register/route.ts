@@ -1,7 +1,7 @@
-import { User } from "@/database/User";
+import bycrypt from "bcryptjs";
 import { connectToDB } from "@/database/connection";
+import { User } from "@/database/User";
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   try {
@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bycrypt.hash(password, 10);
 
     const newUser = await User.create({
       username,

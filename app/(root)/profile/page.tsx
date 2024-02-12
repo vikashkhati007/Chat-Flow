@@ -4,30 +4,51 @@ import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CldUploadButton } from "next-cloudinary";
+import { profile } from "console";
+
+type Inputs = {
+  username: string;
+  profileImage: string;
+};
+
 const Profile = () => {
   const [username, setUsername] = useState("");
   const { data: session } = useSession();
   const user = session?.user;
+  const [loading, setloading] = useState(false);
+  console.log(user);
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        username: user?.username,
+        profileImage: user?.profileImage,
+      });
+    }
+    setloading(false);
+  }, [user]);
+
   const {
     register,
     watch,
+    reset,
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<Inputs>();
 
   const uploadPhoto = (result: any) => {
-    setValue("image", result?.info?.secureurl);
+    setValue("profileImage", result?.info?.secureurl);
   };
   return (
     <section className="w-full h-full flex justify-center items-center text-background">
       <div className="editprofilecontainer max-w-[700px] flex flex-col justify-center items-center p-10 gap-5">
         <h1 className="text-center text-2xl font-semibold">Edit Profile</h1>
         <Image
-          src={watch("image") || user?.image || "/user.jpeg"}
+          src={watch("profileImage") || user?.image || "/user.jpeg"}
           className="rounded-full border-blue-500 border-2 border-opacity-25"
           width={100}
           height={100}
@@ -35,7 +56,9 @@ const Profile = () => {
         />
         <CldUploadButton
           options={{ maxFiles: 1 }}
-          onUpload={uploadPhoto}
+          onUpload={(result) => {
+            uploadPhoto(result);
+          }}
           uploadPreset="ktec1uio"
         >
           <p>Upload photo</p>
