@@ -1,11 +1,8 @@
 import Form from "@/components/Form";
 import React from "react";
-const Register = () => {
-  return (
-    <div>
-      <Form type="register" />
-    </div>
-  );
+
+const page = () => {
+  return <Form type="register" />;
 };
 
-export default Register;
+export default page;

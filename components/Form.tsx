@@ -41,31 +41,28 @@ const Form = ({ type }: any) => {
         },
         body: JSON.stringify(data),
       });
+
       if (res.ok) {
         router.push("/");
-        toast({
-          title: "Your Account is Succesfully Created",
-        });
-      }
-      if (res.status === 400) {
-        toast({
-          title: "Email is already in use",
-        });
       }
     }
+
     if (type === "login") {
-      const res = await signIn("credentials", {
-        ...data,
+      console.log("Hello");
+      const heloo = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
         redirect: false,
       });
-      if (res?.ok) {
-        router.push("/chats");
-      }
-      if (res?.error) {
-        toast({
-          title: "Invalid Email or Password",
-        });
-      }
+      console.log(heloo);
+
+      // if (res?.ok) {
+      //   router.push("/chats");
+      // }
+
+      // if (res?.error) {
+      //   console.log(res.error);
+      // }
     }
   };
 
@@ -75,12 +72,12 @@ const Form = ({ type }: any) => {
         className="space-y-4 flex justify-center items-center flex-col"
         onSubmit={handleSubmit(onSubmit)}
       >
-        {type === "register" ? (
+        <div className="content flex justify-center items-center text-white font-bold w-full">
+          <Image src={"/chat.png"} width={50} height={50} alt="icon" />
+          <h1 className="text-2xl">Chat Flow</h1>
+        </div>
+        {type === "register" && (
           <>
-            <div className="content flex justify-center items-center text-white font-bold w-full">
-              <Image src={"/chat.png"} width={50} height={50} alt="icon" />
-              <h1 className="text-2xl">Chat Flow</h1>
-            </div>
             <div className="relative overflow-hidden rounded-md flex justify-start items-center">
               <UserRound className="text-white absolute mx-2" />
               <NoiseInput
@@ -103,50 +100,54 @@ const Form = ({ type }: any) => {
                 name="username"
               />
             </div>
-            <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-              <Mail className="text-white absolute mx-2" />
-              <NoiseInput
-                val={{
-                  ...register("email", {
-                    required: "Email is Required",
-                    validate: (value) => {
-                      if (value.length < 3) {
-                        return "Email must be atleast 3 charater";
-                      }
-                    },
-                  }),
-                }}
-                placeholder="Enter your email"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                value={email}
-                type="email"
-                name="email"
-              />
-            </div>
-            <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-              <Key className="text-white absolute mx-2 " />
-              <NoiseInput
-                val={{
-                  ...register("password", {
-                    required: "Password is Required",
-                    validate: (value) => {
-                      if (value.length < 3) {
-                        return "Password must be atleast 3 charater";
-                      }
-                    },
-                  }),
-                }}
-                placeholder="Enter your Password"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                value={password}
-                type="password"
-                name="password"
-              />
-            </div>
+          </>
+        )}
+        <div className="relative overflow-hidden rounded-md flex justify-start items-center">
+          <Mail className="text-white absolute mx-2" />
+          <NoiseInput
+            val={{
+              ...register("email", {
+                required: "Email is Required",
+                validate: (value) => {
+                  if (value.length < 3) {
+                    return "Email must be atleast 3 charater";
+                  }
+                },
+              }),
+            }}
+            placeholder="Enter your email"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            value={email}
+            type="email"
+            name="email"
+          />
+        </div>
+        <div className="relative overflow-hidden rounded-md flex justify-start items-center">
+          <Key className="text-white absolute mx-2 " />
+          <NoiseInput
+            val={{
+              ...register("password", {
+                required: "Password is Required",
+                validate: (value) => {
+                  if (value.length < 3) {
+                    return "Password must be atleast 3 charater";
+                  }
+                },
+              }),
+            }}
+            placeholder="Enter your Password"
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+            value={password}
+            type="password"
+            name="password"
+          />
+        </div>
+        {type === "register" && (
+          <>
             <div className="relative overflow-hidden rounded-md flex justify-start items-center">
               <Key className="text-white absolute mx-2 " />
               <NoiseInput
@@ -170,62 +171,11 @@ const Form = ({ type }: any) => {
               />
             </div>
           </>
-        ) : (
-          <>
-            <div className="content flex justify-center items-center text-white font-bold w-full">
-              <Image src={"/chat.png"} width={50} height={50} alt="icon" />
-              <h1 className="text-2xl">Chat Flow</h1>
-            </div>
-            <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-              <Mail className="text-white absolute mx-2" />
-              <NoiseInput
-                val={{
-                  ...register("email", {
-                    required: "Email is Required",
-                    validate: (value) => {
-                      if (value.length < 3) {
-                        return "Email must be atleast 3 charater";
-                      }
-                    },
-                  }),
-                }}
-                placeholder="Enter your email"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                value={email}
-                type="email"
-                name="email"
-              />
-            </div>
-            <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-              <Key className="text-white absolute mx-2 " />
-
-              <NoiseInput
-                val={{
-                  ...register("password", {
-                    required: "Password is Required",
-                    validate: (value) => {
-                      if (value.length < 3) {
-                        return "Password must be atleast 3 charater";
-                      }
-                    },
-                  }),
-                }}
-                placeholder="Enter your Password"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                value={password}
-                type="password"
-                name="password"
-              />
-            </div>
-          </>
         )}
+
         <div className="bottomcontainer flex justify-between items-center w-full ">
           <Link
-            href={type === "register" ? "/login" : "/register"}
+            href={type === "register" ? "/" : "/register"}
             className="text-muted-foreground text-sm hover:text-background cursor-pointer decoration-blue-500 hover:underline"
           >
             {type === "register"

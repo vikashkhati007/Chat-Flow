@@ -1,6 +1,6 @@
 "use client";
 import { LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,8 +12,7 @@ const TopBar = () => {
   const handleLogout = async () => {
     signOut({ callbackUrl: "/" });
   };
-  const { data: session } = useSession();
-  const user = session?.user;
+  console.log;
 
   return (
     <header className="w-full px-10 py-2">
@@ -40,7 +39,7 @@ const TopBar = () => {
           <Link href={"/profile"}>
             <Image
               className="border-2 border-blue-500 rounded-full"
-              src={user?.image || "/user.jpeg"}
+              src={"/user.jpeg"}
               width={50}
               height={50}
               alt="profile"

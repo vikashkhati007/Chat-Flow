@@ -10,14 +10,10 @@ export const connectToDB = async () => {
     return;
   }
 
-  // ...
-
   try {
     await mongoose.connect(`${process.env.MONGODB_URL}`, {
-      dbName: "HaloChat",
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    } as ConnectOptions); // Add 'as ConnectOptions' to fix the type error
+      dbName: "ChatFlow",
+    }); // Add 'as ConnectOptions' to fix the type error
 
     isConnected = true;
 

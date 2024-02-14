@@ -3,8 +3,8 @@ import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
-import Provider from "@/components/Provider";
 import TopBar from "@/components/TopBar";
+import NextAuthProvider from "@/components/NextProvider";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -30,19 +30,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("bg-[#00072B]", poppins.className)}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Provider>
+      <NextAuthProvider>
+        <body className={cn("bg-[#00072B]", poppins.className)}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
             <TopBar />
             {children}
-          </Provider>
-        </ThemeProvider>
-      </body>
+          </ThemeProvider>
+        </body>
+      </NextAuthProvider>
     </html>
   );
 }

@@ -1,20 +1,11 @@
-"use client";
-import React from "react";
 import { useSession } from "next-auth/react";
+import React from "react";
+import page from "../contacts/page";
 
-const Page = () => {
-  const { data, status } = useSession();
-
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (!data) {
-    return <div>Please log in to view this page.</div>;
-  }
-
-  console.log(data);
+const Chats = () => {
+  const { data: session } = useSession();
+  console.log(session);
   return <div></div>;
 };
 
-export default Page;
+export default Chats;

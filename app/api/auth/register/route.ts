@@ -1,6 +1,6 @@
 import bycrypt from "bcryptjs";
 import { connectToDB } from "@/database/connection";
-import { User } from "@/database/User";
+import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
