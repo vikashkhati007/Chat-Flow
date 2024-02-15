@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NoiseInput from "./NoiseInput";
 import { Button } from "./ui/button";
 import { Key, Mail, UserRound } from "lucide-react";
@@ -7,8 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
-import { signIn } from "next-auth/react";
+
 type Inputs = {
   username: string;
   email: string;
@@ -29,7 +28,6 @@ const Form = ({ type }: any) => {
   } = useForm<Inputs>();
 
   const router = useRouter();
-  const { toast } = useToast();
 
   const onSubmit = async (data: any) => {
     if (type === "register") {
@@ -47,13 +45,11 @@ const Form = ({ type }: any) => {
     }
 
     if (type === "login") {
-      const res = await signIn("credentials", {
-        redirect: false,
-        ...data,
-      });
-      if (res?.url) {
-        router.replace("/chats");
-      }
+      // const res = await getUser(data.email, data.password);
+      // if (res) {
+      //   console.log(res);
+      //   router.push("/chats");
+      // }
     }
   };
 
