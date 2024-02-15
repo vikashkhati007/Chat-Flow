@@ -1,6 +1,6 @@
 import Form from "@/components/Form";
 
-const Login = () => {
+const Login = async () => {
   return <Form type="login" />;
 };
 

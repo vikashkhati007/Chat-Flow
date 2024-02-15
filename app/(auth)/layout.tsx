@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import NextAuthProvider from "@/components/NextProvider";
+
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
 export const metadata: Metadata = {
@@ -20,18 +20,10 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function Layout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <NextAuthProvider>
-        <body className={cn("bg-[#00072B]", poppins.className)}>
-          {children}
-        </body>
-      </NextAuthProvider>
+      <body className={cn("bg-[#00072B]", poppins.className)}>{children}</body>
     </html>
   );
 }

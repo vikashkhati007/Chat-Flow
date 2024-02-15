@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NoiseInput from "./NoiseInput";
 import { Button } from "./ui/button";
 import { Key, Mail, UserRound } from "lucide-react";
@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { signIn } from "next-auth/react";
-
 type Inputs = {
   username: string;
   email: string;
@@ -48,21 +47,13 @@ const Form = ({ type }: any) => {
     }
 
     if (type === "login") {
-      console.log("Hello");
-      const heloo = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
+      const res = await signIn("credentials", {
         redirect: false,
+        ...data,
       });
-      console.log(heloo);
-
-      // if (res?.ok) {
-      //   router.push("/chats");
-      // }
-
-      // if (res?.error) {
-      //   console.log(res.error);
-      // }
+      if (res?.url) {
+        router.replace("/chats");
+      }
     }
   };
 
@@ -120,7 +111,7 @@ const Form = ({ type }: any) => {
               setEmail(e.target.value);
             }}
             value={email}
-            type="email"
+            type="text"
             name="email"
           />
         </div>
