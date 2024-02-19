@@ -15,8 +15,8 @@ const TopBar = () => {
   console.log;
 
   return (
-    <header className="w-full px-10 py-2">
-      <nav className="w-full border-opacity-25 rounded-[20px] flex justify-between items-center text-white px-5 bg-blend-overlay border-2 border-blue-500  p-2">
+    <header className="w-full py-2">
+      <nav className="w-full flex justify-between items-center text-white px-10 bg-blend-overlay p-2 border-b border-white border-opacity-10">
         <Link
           href={"/chats"}
           className="titlecontaienr flex justify-start items-center gap-2"
@@ -38,10 +38,10 @@ const TopBar = () => {
           </Link>
           <Link href={"/profile"}>
             <Image
-              className="border-2 border-blue-500 rounded-full"
+              className="rounded-full border-2 border-opacity-20 border-white  "
               src={"/user.jpeg"}
-              width={50}
-              height={50}
+              width={40}
+              height={40}
               alt="profile"
             />
           </Link>

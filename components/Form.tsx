@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import NoiseInput from "./NoiseInput";
 import { Button } from "./ui/button";
 import { Key, Mail, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 type Inputs = {
   username: string;
@@ -45,11 +46,15 @@ const Form = ({ type }: any) => {
     }
 
     if (type === "login") {
-      // const res = await getUser(data.email, data.password);
-      // if (res) {
-      //   console.log(res);
-      //   router.push("/chats");
-      // }
+      const res = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+      if (res?.ok) {
+        router.push("/chats");
+      } else {
+        console.log(res?.error);
+      }
     }
   };
 

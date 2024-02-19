@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "@/app/globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
+import Provider from "@/Provider";
 import TopBar from "@/components/TopBar";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
@@ -25,7 +25,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: any) {
   return (
     <html lang="en">
-      <body className={cn("bg-[#00072B]", poppins.className)}>{children}</body>
+      <body className={cn("bg-[#00072B]", poppins.className)}>
+        <Provider>
+          <TopBar />
+          {children}
+        </Provider>
+      </body>
     </html>
   );
 }
