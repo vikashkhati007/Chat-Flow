@@ -10,7 +10,7 @@ const TopBar = () => {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: "/login" });
   };
   console.log;
 

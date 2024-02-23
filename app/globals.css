@@ -57,3 +57,26 @@
     @apply bg-background text-foreground;
   }
 }
+.searchcontainer {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  border-radius: 20px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.54);
+  border-width: 1px;
+  position: relative;
+}
+
+.rectangle-13,
+.rectangle-13 * {
+  box-sizing: border-box;
+}
+.rectangle-13 {
+  border-radius: 0px;
+  width: 168px;
+  height: 33px;
+  overflow: visible;
+}

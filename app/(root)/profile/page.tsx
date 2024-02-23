@@ -7,7 +7,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CldUploadButton } from "next-cloudinary";
-import { profile } from "console";
 
 type Inputs = {
   username: string;
@@ -18,8 +17,6 @@ const Profile = () => {
   const [username, setUsername] = useState("");
   const { data: session } = useSession();
   const user = session?.user;
-  const [loading, setloading] = useState(false);
-  console.log(user);
 
   useEffect(() => {
     if (user) {
@@ -28,7 +25,6 @@ const Profile = () => {
         profileImage: user?.profileImage,
       });
     }
-    setloading(false);
   }, [user]);
 
   const {

@@ -1,10 +1,7 @@
-"use client";
-import React from "react";
-import { useSession } from "next-auth/react";
+import ChatSection from "@/components/ChatSection";
+
 const Chats = () => {
-  const { data: session } = useSession();
-  console.log(session);
-  return <div></div>;
+  return <ChatSection />;
 };
 
 export default Chats;
