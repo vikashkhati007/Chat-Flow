@@ -1,8 +1,9 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import User from "@/models/User";
-import { connectToDB } from "@/database/connection";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
@@ -12,29 +13,34 @@ const handler = NextAuth({
         email: { label: "Email", type: "text", placeholder: "Email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid email or password");
+      async authorize(credentials) {
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Invalid email or password");
+          }
+
+          // Fetch user from the database using Prisma
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
+
+          if (!user || !user.password) {
+            throw new Error("Invalid email or password");
+          }
+
+          // Compare the provided password with the stored hashed password
+          const isMatch = await bcrypt.compare(credentials.password, user.password);
+
+          if (!isMatch) {
+            throw new Error("Invalid password");
+          }
+
+          // Return user if authentication is successful
+          return user;
+        } catch (error) {
+          console.error("Authorize error:", error);
+          throw new Error("Authentication failed");
         }
-
-        await connectToDB();
-
-        const user = await User.findOne({ email: credentials.email });
-
-        if (!user || !user?.password) {
-          throw new Error("Invalid email or password");
-        }
-
-        const isMatch = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isMatch) {
-          throw new Error("Invalid password");
-        }
-
-        return user;
       },
     }),
   ],
@@ -42,13 +48,25 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    async session({ session }) {
-      const mongodbUser = await User.findOne({ email: session.user.email });
-      session.user.id = mongodbUser._id.toString();
+    async session({ session, token }) {
+      try {
+        // Fetch the user from the database using Prisma
+        const user = await prisma.user.findUnique({
+          where: { email: session.user.email },
+        });
 
-      session.user = { ...session.user, ...mongodbUser._doc };
+        if (user) {
+          // Add user data to session
+          session.user.id = user.id;
+          session.user.username = user.username;
+          session.user.profileImage = user.profileImage;
+        }
 
-      return session;
+        return session;
+      } catch (error) {
+        console.error("Session callback error:", error);
+        throw new Error("Failed to load session");
+      }
     },
   },
 });

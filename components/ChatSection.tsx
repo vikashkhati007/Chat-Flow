@@ -1,5 +1,4 @@
 import React from "react";
-
 import MessageSection from "./chats/MessageSection";
 import UserListSection from "./chats/UserListSection";
 

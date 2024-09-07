@@ -55,7 +55,7 @@ const Profile = () => {
           onUpload={(result) => {
             uploadPhoto(result);
           }}
-          uploadPreset="ktec1uio"
+          uploadPreset="dqn6ujbp1"
         >
           <p>Upload photo</p>
         </CldUploadButton>

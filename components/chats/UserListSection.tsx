@@ -4,12 +4,15 @@ import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 import UsersList from "./UsersList";
+import { getSession } from "next-auth/react";
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
-const UserListSection = () => {
+const UserListSection = async () => {
+  const session = await getSession();
+   console.log(session);
   return (
     <section className="text-white w-[337px] bg-gradient-to-b rounded-xl flex justify-center py-5 overflow-hidden relative flex-col gap-5 items-center shadow-sm">
       <div className="bgcolor absolute -z-20 top-0 w-full h-full bg-[#1389F6] mix-blend-overlay"></div>
