@@ -1,5 +1,4 @@
 import ChatSection from "@/components/ChatSection";
-
 const Chats = () => {
   return <ChatSection />;
 };
