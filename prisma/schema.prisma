@@ -10,23 +10,23 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId  // Use ObjectId native type
-  username        String    @unique
-  email           String    @unique
-  password        String
-  profileImage    String    @default("")  // Default empty string for profile image
-  messagesSent    Message[] @relation("MessagesSent")
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId native type
+  name             String    @unique
+  email            String    @unique
+  password         String
+  profileImage     String    @default("") // Default empty string for profile image
+  messagesSent     Message[] @relation("MessagesSent")
   messagesReceived Message[] @relation("MessagesReceived")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Message {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId  // Use ObjectId native type
-  sender      User     @relation("MessagesSent", fields: [senderId], references: [id])
-  senderId    String   @db.ObjectId  // Using ObjectId as String with native type
-  receiver    User     @relation("MessagesReceived", fields: [receiverId], references: [id])
-  receiverId  String   @db.ObjectId  // Using ObjectId as String with native type
-  content     String
-  createdAt   DateTime @default(now())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId native type
+  sender     User     @relation("MessagesSent", fields: [senderId], references: [id])
+  senderId   String   @db.ObjectId // Using ObjectId as String with native type
+  receiver   User     @relation("MessagesReceived", fields: [receiverId], references: [id])
+  receiverId String   @db.ObjectId // Using ObjectId as String with native type
+  content    String
+  createdAt  DateTime @default(now())
 }

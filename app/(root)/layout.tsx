@@ -3,7 +3,7 @@ import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import Provider from "@/Provider";
-import TopBar from "@/components/TopBar";
+import Sidebar from "@/components/chats/Sidebar";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -25,12 +25,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: any) {
   return (
     <html lang="en">
-      <body className={cn("bg-[#00072B]", poppins.className)}>
-        <Provider>
-          <TopBar />
+      <Provider>
+        <body className={cn("bg-[#00072B] flex", poppins.className)}>
+          <Sidebar />
           {children}
-        </Provider>
-      </body>
+        </body>
+      </Provider>
     </html>
   );
 }

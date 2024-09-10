@@ -10,14 +10,14 @@ import { redirect, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 type Inputs = {
-  username: string;
+  name: string;
   email: string;
   password: string;
   confirmpassword: string;
 };
 
 const Form = ({ type }: any) => {
-  const [username, setUsername] = useState("");
+  const [name, setname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
@@ -74,22 +74,22 @@ const Form = ({ type }: any) => {
               <UserRound className="text-white absolute mx-2" />
               <NoiseInput
                 val={{
-                  ...register("username", {
-                    required: "Username is Required",
+                  ...register("name", {
+                    required: "name is Required",
                     validate: (value) => {
                       if (value.length < 3) {
-                        return "Username must be atleast 3 charater";
+                        return "name must be atleast 3 charater";
                       }
                     },
                   }),
                 }}
-                placeholder="Enter Your Username"
+                placeholder="Enter Your Full Name"
                 onChange={(e) => {
-                  setUsername(e.target.value);
+                  setname(e.target.value);
                 }}
-                value={username}
-                type="username"
-                name="username"
+                value={name}
+                type="name"
+                name="name"
               />
             </div>
           </>

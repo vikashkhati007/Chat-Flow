@@ -11,11 +11,11 @@ const NoiseInput = ({
   val,
   className,
 }: {
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-  value: unknown;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  value?: unknown;
   placeholder: React.HTMLInputTypeAttribute;
-  type: React.HTMLInputTypeAttribute;
-  name: React.HTMLInputTypeAttribute;
+  type?: React.HTMLInputTypeAttribute;
+  name?: React.HTMLInputTypeAttribute;
   val?: any;
   className?: React.HTMLInputTypeAttribute;
 }) => {

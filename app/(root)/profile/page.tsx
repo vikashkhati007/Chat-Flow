@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CldUploadButton } from "next-cloudinary";
 
 type Inputs = {
   username: string;
@@ -36,9 +35,7 @@ const Profile = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const uploadPhoto = (result: any) => {
-    setValue("profileImage", result?.info?.secureurl);
-  };
+
   return (
     <section className="w-full h-full flex justify-center items-center text-background">
       <div className="editprofilecontainer max-w-[700px] flex flex-col justify-center items-center p-10 gap-5">
@@ -50,15 +47,8 @@ const Profile = () => {
           height={100}
           alt="profile"
         />
-        <CldUploadButton
-          options={{ maxFiles: 1 }}
-          onUpload={(result) => {
-            uploadPhoto(result);
-          }}
-          uploadPreset="dqn6ujbp1"
-        >
+       
           <p>Upload photo</p>
-        </CldUploadButton>
         <div className="usereditcontainer flex justify-start items-center relative">
           <User className="absolute left-2" />
           <NoiseInput

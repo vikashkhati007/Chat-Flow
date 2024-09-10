@@ -58,7 +58,7 @@ const handler = NextAuth({
         if (user) {
           // Add user data to session
           session.user.id = user.id;
-          session.user.username = user.username;
+          session.user.name = user.name;
           session.user.profileImage = user.profileImage;
         }
 
