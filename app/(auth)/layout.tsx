@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import Provider from "@/Provider";
+import Providers from "@/Provider";
+import { getSession } from "@/lib/auth";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -21,11 +22,13 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+  
   return (
     <html lang="en">
       <body className={cn("bg-[#00072B]", poppins.className)}>
-        <Provider>{children}</Provider>
+      <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );

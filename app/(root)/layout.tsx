@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import Provider from "@/Provider";
 import Sidebar from "@/components/chats/Sidebar";
+import Providers from "@/Provider";
+import { getSession } from "@/lib/auth";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -22,15 +23,16 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({ children }: any) {
+export default async function RootLayout({ children }: any) {
+  const session = await getSession();
   return (
     <html lang="en">
-      <Provider>
+      <Providers session={session}>
         <body className={cn("bg-[#00072B] flex", poppins.className)}>
           <Sidebar />
           {children}
         </body>
-      </Provider>
+        </Providers>
     </html>
   );
 }

@@ -1,6 +1,7 @@
-import ChatSection from "@/components/ChatSection";
-const Chats = () => {
-  return <ChatSection />;
+import Chats from "@/components/chats/Chats";
+
+const page = () => {
+  return <Chats/>;
 };
 
-export default Chats;
+export default page;
