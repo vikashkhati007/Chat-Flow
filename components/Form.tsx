@@ -65,7 +65,7 @@ const Form = ({ type }: any) => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="content flex justify-center items-center text-white font-bold w-full">
-          <Image src={"/chat.png"} width={50} height={50} alt="icon" />
+          <Image src={"/logo.png"} width={50} height={50} alt="icon" />
           <h1 className="text-2xl">Chat Flow</h1>
         </div>
         {type === "register" && (

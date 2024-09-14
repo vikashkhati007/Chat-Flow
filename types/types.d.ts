@@ -29,3 +29,25 @@ export type User = {
   name?: string | null;
   email?: string | null;
 };
+
+export type Conversation = {
+  id: number;
+  name: string;
+  avatar: string;
+  time: string;
+  unread?: boolean;
+  email: string;
+};
+
+export interface UserProfile {
+  id: number;
+  name: string;
+  profileImage: string;
+}
+
+export type Message = {
+  id: number
+  sender: 'user' | 'other'
+  content: string
+  time: string
+}
