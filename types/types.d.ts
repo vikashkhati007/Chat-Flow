@@ -52,6 +52,7 @@ export type Message = {
   time: string
   senderId: string
   receiverId: string
+  createdAt: string
 }
 
 

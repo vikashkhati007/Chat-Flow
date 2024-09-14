@@ -7,8 +7,9 @@ import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { Conversation, Message, UserProfile } from "@/types/types";
+import { timeAgo } from "@/lib/time";
 
-export default function ChatSection(users: any) {
+export default function ChatSection(users: any, chatsusers: any) {
   const [activeConversation, setActiveConversation] =
     useState<Conversation | null>(users[1]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -85,30 +86,55 @@ export default function ChatSection(users: any) {
           </div>
         </div>
         <div className="overflow-y-auto h-[calc(100vh-5rem)]">
-          {pathname === "/guests"
-            ? users.users.map((u: UserProfile | any) => (
-                <div
-                  key={u.id}
-                  className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
-                    activeConversation?.id === u.id ? "bg-blue-50" : ""
-                  }`}
-                  onClick={() => setActiveConversation(u)}
-                >
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={u.profileImage} alt={u.name} />
-                    <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="ml-4 flex-1">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold">{u.name}</h3>
-                    </div>
+          {pathname === "/guests" ? (
+            users.users.map((u: UserProfile | any) => (
+              <div
+                key={u.id}
+                className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
+                  activeConversation?.id === u.id ? "bg-blue-50" : ""
+                }`}
+                onClick={() => setActiveConversation(u)}
+              >
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={u.profileImage} alt={u.name} />
+                  <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="ml-4 flex-1">
+                  <div className="flex justify-between">
+                    <h3 className="font-semibold">{u.name}</h3>
                   </div>
-                  {u.unread && (
-                    <div className="w-2 h-2 bg-blue-500 rounded-full ml-2"></div>
-                  )}
                 </div>
-              ))
-            : null}
+                {u.unread && (
+                  <div className="w-2 h-2 bg-blue-500 rounded-full ml-2"></div>
+                )}
+              </div>
+            ))
+          ) : Array.isArray(users.chatsusers) && users.chatsusers.length > 0 ? (
+            users.chatsusers.map((u: UserProfile | any) => (
+              <div
+                key={u.id}
+                className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
+                  activeConversation?.id === u.id ? "bg-blue-50" : ""
+                }`}
+                onClick={() => setActiveConversation(u)}
+              >
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={u.profileImage} alt={u.name} />
+                  <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="ml-4 flex-1">
+                  <div className="flex justify-between">
+                    <h3 className="font-semibold">{u.name}</h3>
+                  </div>
+                </div>
+                {u.unread && (
+                  <div className="w-2 h-2 bg-blue-500 rounded-full ml-2"></div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="p-4 text-gray-500">No users available</div>
+          )}
         </div>
       </div>
       <div className="flex-1 flex flex-col">
@@ -152,7 +178,7 @@ export default function ChatSection(users: any) {
                       >
                         <p>{message.content}</p>
                         <p className="text-xs mt-1 opacity-75">
-                          {message.time}
+                          {timeAgo(message.createdAt)}
                         </p>
                       </div>
                     </div>

@@ -41,7 +41,7 @@ const NavItem: React.FC<
     >
       <Icon className="h-5 w-5 mr-3" />
       <span className="flex-grow">{label}</span>
-      {count !== undefined && (
+      {/* {count !== undefined && (
         <span
           className={`px-2 py-1 text-xs font-semibold rounded-full ${
             isActive ? "bg-blue-100 text-blue-600" : "bg-gray-200 text-gray-600"
@@ -49,7 +49,7 @@ const NavItem: React.FC<
         >
           {count}
         </span>
-      )}
+      )} */}
     </Link>
   </li>
 );
@@ -76,7 +76,7 @@ export default function Sidebar() {
           ))}
         </ul>
       </nav>
-      <div className="p-4 border-t flex items-center gap-1 relative">
+      <div className="p-4 border-t flex items-center gap-2 relative ">
         <Avatar>
           <AvatarImage
             src="/placeholder.svg?height=32&width=32"
@@ -90,7 +90,7 @@ export default function Sidebar() {
           </p>
           <p className="text-xs text-gray-500">Welcome</p>
         </div>
-        <div className="signout absolute right-5 cursor-pointer">
+        <div className="signout absolute right-2 cursor-pointer ">
         <LogOutIcon width={20} onClick={() => signOut({ callbackUrl: '/' })}/>
         </div>
       </div>
