@@ -50,4 +50,16 @@ export type Message = {
   sender: 'user' | 'other'
   content: string
   time: string
+  senderId: string
+  receiverId: string
+}
+
+
+export interface SessionProps {
+  user:{
+    email: string;
+    id: string;
+    image: string;
+    name: string;
+  }
 }

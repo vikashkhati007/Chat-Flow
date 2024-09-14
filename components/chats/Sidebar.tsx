@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { Users, MessageSquare, LayoutDashboard } from "lucide-react";
+import { Users, MessageSquare, LayoutDashboard, LogOutIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 type NavItem = {
   icon: React.ElementType;
@@ -53,7 +55,8 @@ const NavItem: React.FC<
 );
 
 export default function Sidebar() {
-  const [activeItem, setActiveItem] = useState<string>(navItems[0].pathName);
+  const pathname = usePathname();
+  const [activeItem, setActiveItem] = useState<string>(pathname);
   const user = useSession();
   const fullname: string = user.data?.user.name ?? 'loading';
   return (
@@ -73,7 +76,7 @@ export default function Sidebar() {
           ))}
         </ul>
       </nav>
-      <div className="p-4 border-t flex items-center">
+      <div className="p-4 border-t flex items-center gap-1 relative">
         <Avatar>
           <AvatarImage
             src="/placeholder.svg?height=32&width=32"
@@ -86,7 +89,9 @@ export default function Sidebar() {
             {fullname}
           </p>
           <p className="text-xs text-gray-500">Welcome</p>
-          
+        </div>
+        <div className="signout absolute right-5 cursor-pointer">
+        <LogOutIcon width={20} onClick={() => signOut({ callbackUrl: '/' })}/>
         </div>
       </div>
     </div>

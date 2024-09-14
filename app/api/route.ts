@@ -57,7 +57,9 @@ export async function POST(req: Request, res: Response) {
 }
 
 export async function GET(req: Request, res: Response) {
-  const { currentUserId, otherUserId } = await req.json();
+  const url = new URL(req.url);
+  const currentUserId = url.searchParams.get('currentUserId');
+  const otherUserId = url.searchParams.get('otherUserId');
 
   // Validate input
   if (!currentUserId || !otherUserId) {
@@ -96,3 +98,5 @@ export async function GET(req: Request, res: Response) {
     await prisma.$disconnect();
   }
 }
+
+
