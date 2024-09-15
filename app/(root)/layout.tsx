@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Sidebar from "@/components/chats/Sidebar";
 import Providers from "@/Provider";
 import { getSession } from "@/lib/auth";
+import ProgressBarComponent from "@/components/ProgressBar";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -29,10 +30,12 @@ export default async function RootLayout({ children }: any) {
     <html lang="en">
       <Providers session={session}>
         <body className={cn("bg-[#00072B] flex", poppins.className)}>
-          <Sidebar />
-          {children}
+          <ProgressBarComponent>
+            <Sidebar />
+            {children}
+          </ProgressBarComponent>
         </body>
-        </Providers>
+      </Providers>
     </html>
   );
 }

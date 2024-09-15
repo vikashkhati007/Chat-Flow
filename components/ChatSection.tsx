@@ -12,7 +12,7 @@ import { pusherClient } from "@/lib/pusher";
 
 export default function ChatSection(users: any, chatsusers: any) {
   const [activeConversation, setActiveConversation] =
-    useState<Conversation | null>(users[1]);
+  useState<Conversation | null>(users[1]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);

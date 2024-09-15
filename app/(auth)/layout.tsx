@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import Providers from "@/Provider";
 import { getSession } from "@/lib/auth";
+import ProgressBarComponent from "@/components/ProgressBar";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -22,13 +23,19 @@ export const metadata: Metadata = {
   ],
 };
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const session = await getSession();
-  
+
   return (
     <html lang="en">
       <body className={cn("bg-[#00072B]", poppins.className)}>
-      <Providers session={session}>{children}</Providers>
+        <Providers session={session}>
+          <ProgressBarComponent>{children}</ProgressBarComponent>
+        </Providers>
       </body>
     </html>
   );

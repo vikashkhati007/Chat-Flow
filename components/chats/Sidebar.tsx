@@ -59,10 +59,11 @@ export default function Sidebar() {
   const [activeItem, setActiveItem] = useState<string>(pathname);
   const user = useSession();
   const fullname: string = user.data?.user.name ?? 'loading';
+
   return (
     <div className="w-64 h-screen bg-white border-r flex flex-col">
       <div className="p-4">
-        <Image src={"/logo.png"} width={50} height={50} alt="logo" />
+        <Image src={"/logo.png"} width={40} height={40} alt="logo" />
       </div>
       <nav className="flex-grow">
         <ul className="space-y-1">
@@ -82,8 +83,9 @@ export default function Sidebar() {
       <div className="p-4 border-t flex items-center gap-2 relative ">
         <Avatar>
           <AvatarImage
-            src="/placeholder.svg?height=32&width=32"
-            alt={user.data?.user.name || undefined}
+          // @ts-ignore
+            src={user.data?.user.profileImage}
+            alt={user.data?.user.name!}
           />
           <AvatarFallback>{fullname.charAt(0)}</AvatarFallback>
         </Avatar>
