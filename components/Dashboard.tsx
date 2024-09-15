@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    const res = await fetch('/api/updateprofile/', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_WEB_URL}/api/updateprofile/`, {
       method: 'POST',
       body: JSON.stringify({
         id: session.data?.user.id,

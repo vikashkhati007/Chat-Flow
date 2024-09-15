@@ -39,7 +39,7 @@ export default function ChatSection(users: any, chatsusers: any) {
         setError(null); // Reset error state
 
         try {
-          const url = `http://localhost:3000/api/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
+          const url = `${process.env.NEXT_PUBLIC_WEB_URL}/api/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
           const response = await fetch(url, {
             method: "GET",
           });
@@ -70,7 +70,7 @@ export default function ChatSection(users: any, chatsusers: any) {
   }, [activeConversation?.id, session?.data?.user?.id]);
 
   const handleSendMessage = async (formdata: FormData) => {
-    const response = await fetch("http://localhost:3000/api/", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_WEB_URL}/api/`, {
       method: "POST",
       body: JSON.stringify({
         senderId: session?.data?.user?.id,
