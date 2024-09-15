@@ -19,10 +19,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (user) {
-      reset({
-        username: user?.username,
-        profileImage: user?.profileImage,
-      });
+      reset();
     }
   }, [user]);
 

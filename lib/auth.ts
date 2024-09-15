@@ -52,6 +52,7 @@ const authOptions: AuthOptions = {
       try {
         // Fetch the user from the database using Prisma
         const user = await prisma.user.findUnique({
+          // @ts-ignore
           where: { email: session.user.email },
         });
 
@@ -59,6 +60,7 @@ const authOptions: AuthOptions = {
           // Add user data to session
           session.user.id = user.id;
           session.user.name = user.name;
+          // @ts-ignore
           session.user.profileImage = user.profileImage;
         }
 
