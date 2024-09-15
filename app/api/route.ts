@@ -1,5 +1,7 @@
+import { pusherServer } from "@/lib/pusher";
 import { prisma } from "@/prisma/db";
 import { NextResponse } from "next/server";
+
 
 export async function POST(req: Request, res: Response) {
   // Ensure the request body is parsed correctly
@@ -37,6 +39,11 @@ export async function POST(req: Request, res: Response) {
         receiver: true,
       },
     });
+
+       // Pusher event to notify the client that a message has been sent
+       await pusherServer.trigger('chat-channel', 'message-sent', {
+        message,
+      });
 
     // Log the success message
     console.log(
@@ -89,6 +96,7 @@ export async function GET(req: Request, res: Response) {
       },
     });
 
+ 
     // Respond with the messages
     return NextResponse.json(messages, { status: 200 });
   } catch (error) {

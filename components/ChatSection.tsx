@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Search, Paperclip, Send } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { Conversation, Message, UserProfile } from "@/types/types";
 import { timeAgo } from "@/lib/time";
+import { pusherClient } from "@/lib/pusher";
 
 export default function ChatSection(users: any, chatsusers: any) {
   const [activeConversation, setActiveConversation] =
@@ -19,6 +20,14 @@ export default function ChatSection(users: any, chatsusers: any) {
 
   const pathname = usePathname();
   const session: any = useSession();
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+  
 
   useEffect(() => {
     if (activeConversation?.id) {
@@ -41,6 +50,14 @@ export default function ChatSection(users: any, chatsusers: any) {
 
           const messages = await response.json();
           setMessages(messages);
+          
+          const channel = pusherClient.subscribe('chat-channel');
+          
+          // Bind to the message-sent event
+          channel.bind('message-sent', function(data:any) {
+            setMessages((prevMessages) => [...prevMessages, data.message]);
+          });
+
         } catch (error: any) {
           setError(error.message);
         } finally {
@@ -67,10 +84,10 @@ export default function ChatSection(users: any, chatsusers: any) {
 
     if (response.ok) {
       setContent("");
-      const message: Message = await response.json();
-      setMessages((prevMessages) => [...prevMessages, message]);
+      await response.json(); // No need to update messages here, pusher will handle it.
     }
   };
+
 
   return (
     <section className="flex h-screen bg-gray-100 w-full">
@@ -155,7 +172,7 @@ export default function ChatSection(users: any, chatsusers: any) {
                 <span className="text-sm text-blue-600">VIP</span>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={messageContainerRef}>
               {loading && <div>Loading messages...</div>}
               {error && <div className="text-red-500">{error}</div>}
               {loading
