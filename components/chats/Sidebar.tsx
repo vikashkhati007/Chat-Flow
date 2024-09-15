@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import Dashboard from "../Dashboard";
 
 type NavItem = {
   icon: React.ElementType;
@@ -23,7 +24,6 @@ const navItems: NavItem[] = [
     pathName: "/chats",
   },
   { icon: Users, label: "Guests", count: 84, pathName: "/guests" },
-  { icon: LayoutDashboard, label: "Dashboard", pathName: "/dashboard" },
 ];
 
 const NavItem: React.FC<
@@ -76,6 +76,9 @@ export default function Sidebar() {
           ))}
         </ul>
       </nav>
+      <div className="w-full">
+        <Dashboard/>
+      </div>
       <div className="p-4 border-t flex items-center gap-2 relative ">
         <Avatar>
           <AvatarImage
