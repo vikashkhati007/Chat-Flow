@@ -12,7 +12,8 @@ export default function Dashboard() {
   const session = useSession();
   const [name, setName] = useState(session.data?.user.name!)
   const [email, setEmail] = useState(session.data?.user.email!)
-  const [avatarUrl, setAvatarUrl] = useState(session.data?.user.image ? session.data?.user.image : "");
+  // @ts-ignore
+  const [avatarUrl, setAvatarUrl] = useState(session.data?.user.profileImage!);
 
   const [isOpen, setIsOpen] = useState(false);
 

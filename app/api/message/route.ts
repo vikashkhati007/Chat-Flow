@@ -1,7 +1,6 @@
-import { pusherServer } from "@/lib/pusher";
-import { prisma } from "@/prisma/db";
 import { NextResponse } from "next/server";
-
+import { prisma } from "@/prisma/db";
+import { pusherServer } from "@/lib/pusher";
 
 export async function POST(req: Request, res: Response) {
   // Ensure the request body is parsed correctly
@@ -40,16 +39,12 @@ export async function POST(req: Request, res: Response) {
       },
     });
 
-       // Pusher event to notify the client that a message has been sent
-       await pusherServer.trigger('chat-channel', 'message-sent', {
+    if (message) {
+      await pusherServer.trigger("chat-channel", "message-sent", {
         message,
       });
-
-    // Log the success message
-    console.log(
-      `Message sent from ${message.sender.name} to ${message.receiver.name}: ${message.content}`
-    );
-
+    }
+    // Pusher event to notify the client that a message has been sent
     // Respond with the created message
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
@@ -65,8 +60,8 @@ export async function POST(req: Request, res: Response) {
 
 export async function GET(req: Request, res: Response) {
   const url = new URL(req.url);
-  const currentUserId = url.searchParams.get('currentUserId');
-  const otherUserId = url.searchParams.get('otherUserId');
+  const currentUserId = url.searchParams.get("currentUserId");
+  const otherUserId = url.searchParams.get("otherUserId");
 
   // Validate input
   if (!currentUserId || !otherUserId) {
@@ -96,7 +91,6 @@ export async function GET(req: Request, res: Response) {
       },
     });
 
- 
     // Respond with the messages
     return NextResponse.json(messages, { status: 200 });
   } catch (error) {
@@ -106,5 +100,3 @@ export async function GET(req: Request, res: Response) {
     await prisma.$disconnect();
   }
 }
-
-
