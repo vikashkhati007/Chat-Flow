@@ -30,9 +30,9 @@ export default function ChatSection(users: any, chatsusers: any) {
   useEffect(() => {
     if (activeConversation?.id) {
       const fetchMessages = async (currentUserId: string, otherUserId: string) => {
+        setMessages([]);
         setLoading(true);
         setError(null); // Reset error state
-
         try {
           const url = `${process.env.NEXT_PUBLIC_WEB_URL}/api/message/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
           const response = await fetch(url, { method: "GET" });
