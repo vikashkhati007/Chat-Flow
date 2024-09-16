@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { Conversation, Message, UserProfile } from "@/types/types";
 import { timeAgo } from "@/lib/time";
 import { pusherClient } from "@/lib/pusher";
+import Link from "next/link";
 
 export default function ChatSection(users: any, chatsusers: any) {
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(users[1]);
@@ -106,7 +107,8 @@ export default function ChatSection(users: any, chatsusers: any) {
         <div className="overflow-y-auto h-[calc(100vh-5rem)]">
           {filteredUsers.length > 0 ? (
             filteredUsers.map((u: UserProfile) => (
-              <div
+              <Link
+              href={`${process.env.NEXT_PUBLIC_WEB_URL}/${pathname}/?conversationId=${u.id}`}
                 key={u.id}
                 className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${activeConversation?.id === u.id ? "bg-blue-50" : ""}`}
                 // @ts-ignore
@@ -121,7 +123,7 @@ export default function ChatSection(users: any, chatsusers: any) {
                     <h3 className="font-semibold">{u.name}</h3>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <div className="p-4 text-gray-500">No users available</div>
