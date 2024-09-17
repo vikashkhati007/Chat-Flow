@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { useState } from "react";
 import NoiseInput from "./NoiseInput";
 import { Button } from "./ui/button";
 import { Key, Mail, UserRound } from "lucide-react";
@@ -25,32 +25,31 @@ const Form = ({ type }: any) => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<Inputs>();
   const { toast } = useToast();
-
   const router = useRouter();
 
   const onSubmit = async (data: any) => {
-    
     if (type === "register") {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_WEB_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_WEB_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (res.ok) {
         toast({
           title: "Registration Completed",
-          description: "You have been sucessfully registered",
+          description: "You have been successfully registered",
         });
         router.push("/");
-      }
-      else{
+      } else {
         toast({
           title: "Registration Failed",
           description: "Please check your credentials",
@@ -66,7 +65,7 @@ const Form = ({ type }: any) => {
       if (res?.ok) {
         toast({
           title: "Login Completed",
-          description: "You have been sucessfully logged in",
+          description: "You have been successfully logged in",
         });
         router.push("/chats");
       } else {
@@ -89,101 +88,106 @@ const Form = ({ type }: any) => {
           <Image src={"/logo.png"} width={50} height={50} alt="icon" />
           <h1 className="text-2xl">Chat Flow</h1>
         </div>
+
         {type === "register" && (
-          <>
+          <div>
             <div className="relative overflow-hidden rounded-md flex justify-start items-center">
               <UserRound className="text-white absolute mx-2" />
               <NoiseInput
                 val={{
                   ...register("name", {
-                    required: "name is Required",
-                    validate: (value) => {
-                      if (value.length < 3) {
-                        return "name must be atleast 3 charater";
-                      }
-                    },
+                    required: "Name is Required",
+                    validate: (value) =>
+                      value.length >= 3 || "Name must be at least 3 characters",
                   }),
                 }}
                 placeholder="Enter Your Full Name"
-                onChange={(e) => {
-                  setname(e.target.value);
-                }}
+                onChange={(e) => setname(e.target.value)}
                 value={name}
-                type="name"
+                type="text"
                 name="name"
               />
             </div>
-          </>
+            {errors.name && (
+              <span className="text-red-500 text-xs">
+                {errors.name.message}
+              </span>
+            )}
+          </div>
         )}
-        <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-          <Mail className="text-white absolute mx-2" />
-          <NoiseInput
-            val={{
-              ...register("email", {
-                required: "Email is Required",
-                validate: (value) => {
-                  if (value.length < 3) {
-                    return "Email must be atleast 3 charater";
-                  }
-                },
-              }),
-            }}
-            placeholder="Enter your email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-            value={email}
-            type="text"
-            name="email"
-          />
+
+        <div>
+          <div className="relative overflow-hidden rounded-md flex justify-start items-center">
+            <Mail className="text-white absolute mx-2" />
+            <NoiseInput
+              val={{
+                ...register("email", {
+                  required: "Email is Required",
+                  validate: (value) =>
+                    value.length >= 3 || "Email must be at least 3 characters",
+                }),
+              }}
+              placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              type="text"
+              name="email"
+            />
+          </div>
+          {errors.email && (
+            <span className="text-red-500 text-xs">{errors.email.message}</span>
+          )}
         </div>
-        <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-          <Key className="text-white absolute mx-2 " />
-          <NoiseInput
-            val={{
-              ...register("password", {
-                required: "Password is Required",
-                validate: (value) => {
-                  if (value.length < 3) {
-                    return "Password must be atleast 3 charater";
-                  }
-                },
-              }),
-            }}
-            placeholder="Enter your Password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            value={password}
-            type="password"
-            name="password"
-          />
+        <div>
+          <div className="relative overflow-hidden rounded-md flex justify-start items-center">
+            <Key className="text-white absolute mx-2" />
+            <NoiseInput
+              val={{
+                ...register("password", {
+                  required: "Password is Required",
+                  validate: (value) =>
+                    value.length >= 3 ||
+                    "Password must be at least 3 characters",
+                }),
+              }}
+              placeholder="Enter your Password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              type="password"
+              name="password"
+            />
+          </div>
+          {errors.password && (
+            <span className="text-red-500 text-xs">
+              {errors.password.message}
+            </span>
+          )}
         </div>
         {type === "register" && (
-          <>
+          <div>
             <div className="relative overflow-hidden rounded-md flex justify-start items-center">
-              <Key className="text-white absolute mx-2 " />
+              <Key className="text-white absolute mx-2" />
               <NoiseInput
                 val={{
                   ...register("confirmpassword", {
-                    required: "ConfirmPassword is Required",
-                    validate: (value) => {
-                      if (value.length < 3) {
-                        return "ConfirmPassword must be atleast 3 charater";
-                      }
-                    },
+                    required: "Confirm Password is Required",
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
                   }),
                 }}
                 placeholder="Confirm your Password"
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 value={confirmpassword}
                 name="confirmpassword"
                 type="password"
               />
             </div>
-          </>
+            {errors.confirmpassword && (
+              <span className="text-red-500 text-xs">
+                {errors.confirmpassword.message}
+              </span>
+            )}
+          </div>
         )}
 
         <div className="bottomcontainer flex justify-between items-center w-full ">
@@ -195,9 +199,10 @@ const Form = ({ type }: any) => {
               ? "Already Have an Account"
               : "Create New Account"}
           </Link>
+
           <Button
             size={"lg"}
-            className=" border-t border-white border-opacity-60 font-bold tracking-wider hover:border-b hover:border-t-0"
+            className="border-t border-white border-opacity-60 font-bold tracking-wider hover:border-b hover:border-t-0"
           >
             {type === "register" ? "Register" : "Login"}
           </Button>
