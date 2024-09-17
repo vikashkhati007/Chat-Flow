@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Providers from "@/Provider";
 import { getSession } from "@/lib/auth";
 import ProgressBarComponent from "@/components/ProgressBar";
+import { Toaster } from "@/components/ui/toaster"
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -35,6 +36,7 @@ export default async function Layout({
       <body className={cn("bg-[#00072B]", poppins.className)}>
         <Providers session={session}>
           <ProgressBarComponent>{children}</ProgressBarComponent>
+          <Toaster />
         </Providers>
       </body>
     </html>

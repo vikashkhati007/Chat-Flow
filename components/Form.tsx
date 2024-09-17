@@ -6,8 +6,9 @@ import { Key, Mail, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 
 type Inputs = {
   name: string;
@@ -27,10 +28,12 @@ const Form = ({ type }: any) => {
     watch,
     formState: { errors },
   } = useForm<Inputs>();
+  const { toast } = useToast();
 
   const router = useRouter();
 
   const onSubmit = async (data: any) => {
+    
     if (type === "register") {
       const res = await fetch(`${process.env.NEXT_PUBLIC_WEB_URL}/api/auth/register`, {
         method: "POST",
@@ -41,7 +44,17 @@ const Form = ({ type }: any) => {
       });
 
       if (res.ok) {
+        toast({
+          title: "Registration Completed",
+          description: "You have been sucessfully registered",
+        });
         router.push("/");
+      }
+      else{
+        toast({
+          title: "Registration Failed",
+          description: "Please check your credentials",
+        });
       }
     }
 
@@ -51,8 +64,16 @@ const Form = ({ type }: any) => {
         redirect: false,
       });
       if (res?.ok) {
+        toast({
+          title: "Login Completed",
+          description: "You have been sucessfully logged in",
+        });
         router.push("/chats");
       } else {
+        toast({
+          title: "Login Failed",
+          description: "Please check your credentials",
+        });
         console.log(res?.error);
       }
     }

@@ -6,6 +6,7 @@ import Sidebar from "@/components/chats/Sidebar";
 import Providers from "@/Provider";
 import { getSession } from "@/lib/auth";
 import ProgressBarComponent from "@/components/ProgressBar";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
 
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }: any) {
             <Sidebar />
             {children}
           </ProgressBarComponent>
+          <Toaster />
         </body>
       </Providers>
     </html>
