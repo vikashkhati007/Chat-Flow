@@ -9,10 +9,3 @@ export const pusherServer = new PusherServer({
   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!, 
 });
 
-// Client-side: For listening to events
-import Pusher from "pusher-js";
-
-// Pusher Client (Frontend) configuration
-export const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-});

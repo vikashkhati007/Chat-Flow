@@ -8,11 +8,11 @@ import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { Conversation, Message, UserProfile } from "@/types/types";
 import { timeAgo } from "@/lib/time";
-import { pusherClient } from "@/lib/pusher";
-import Link from "next/link";
+import Pusher from "pusher-js";
 
 export default function ChatSection(users: any, chatsusers: any) {
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(users[1]);
+  const [activeConversation, setActiveConversation] =
+    useState<Conversation | null>(users[1]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,13 +24,17 @@ export default function ChatSection(users: any, chatsusers: any) {
 
   useEffect(() => {
     if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTop =
+        messageContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
   useEffect(() => {
     if (activeConversation?.id) {
-      const fetchMessages = async (currentUserId: string, otherUserId: string) => {
+      const fetchMessages = async (
+        currentUserId: string,
+        otherUserId: string
+      ) => {
         setMessages([]);
         setLoading(true);
         setError(null); // Reset error state
@@ -45,13 +49,19 @@ export default function ChatSection(users: any, chatsusers: any) {
           const messages = await response.json();
           setMessages(messages);
 
-          const channel = pusherClient.subscribe('chat-channel');
-
-          // Bind to the message-sent event
-          channel.bind('message-sent', function (data: any) {
-            setMessages((prevMessages) => [...prevMessages, data.message]);
+         const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+            cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
           });
 
+          const channelName = `${[currentUserId, otherUserId]
+            .sort()
+            .join("-")}`;
+          const channel = pusherClient.subscribe(channelName);
+
+          channel.bind("new-message", function (data: any) {
+            console.log("Received data:", data); // Debugging
+            setMessages((prevMessages) => [...prevMessages, data.message]);
+          });
         } catch (error: any) {
           setError(error.message);
         } finally {
@@ -64,15 +74,18 @@ export default function ChatSection(users: any, chatsusers: any) {
   }, [activeConversation?.id, session?.data?.user?.id]);
 
   const handleSendMessage = async (formdata: FormData) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_WEB_URL}/api/message/`, {
-      method: "POST",
-      body: JSON.stringify({
-        senderId: session?.data?.user?.id,
-        receiverId: activeConversation?.id,
-        content: formdata.get("message"),
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_WEB_URL}/api/message/`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          senderId: session?.data?.user?.id,
+          receiverId: activeConversation?.id,
+          content: formdata.get("message"),
+        }),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
     if (response.ok) {
       setContent("");
@@ -81,13 +94,14 @@ export default function ChatSection(users: any, chatsusers: any) {
   };
 
   // Filtered users based on searchTerm
-  const filteredUsers = pathname === "/guests"
-    ? users.users.filter((u: UserProfile) =>
-        u.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : users.chatsusers.filter((u: UserProfile) =>
-        u.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const filteredUsers =
+    pathname === "/guests"
+      ? users.users.filter((u: UserProfile) =>
+          u.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : users.chatsusers.filter((u: UserProfile) =>
+          u.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
   return (
     <section className="flex h-screen bg-gray-100 w-full">
@@ -107,10 +121,11 @@ export default function ChatSection(users: any, chatsusers: any) {
         <div className="overflow-y-auto h-[calc(100vh-5rem)]">
           {filteredUsers.length > 0 ? (
             filteredUsers.map((u: UserProfile) => (
-              <Link
-              href={`${process.env.NEXT_PUBLIC_WEB_URL}/${pathname}/?conversationId=${u.id}`}
+              <div
                 key={u.id}
-                className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${activeConversation?.id === u.id ? "bg-blue-50" : ""}`}
+                className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
+                  activeConversation?.id === u.id ? "bg-blue-50" : ""
+                }`}
                 // @ts-ignore
                 onClick={() => setActiveConversation(u)}
               >
@@ -123,7 +138,7 @@ export default function ChatSection(users: any, chatsusers: any) {
                     <h3 className="font-semibold">{u.name}</h3>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))
           ) : (
             <div className="p-4 text-gray-500">No users available</div>
@@ -136,7 +151,7 @@ export default function ChatSection(users: any, chatsusers: any) {
             <div className="p-4 border-b bg-white flex items-center">
               <Avatar className="h-10 w-10">
                 <AvatarImage
-                // @ts-ignore
+                  // @ts-ignore
                   src={activeConversation.profileImage}
                   alt={activeConversation.name}
                 />
@@ -149,16 +164,27 @@ export default function ChatSection(users: any, chatsusers: any) {
                 <span className="text-sm text-blue-600">VIP</span>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={messageContainerRef}>
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-4"
+              ref={messageContainerRef}
+            >
               {loading && <div>Loading messages...</div>}
               {error && <div className="text-red-500">{error}</div>}
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.senderId === session?.data?.user?.id ? "justify-end" : "justify-start"}`}
+                  className={`flex ${
+                    message.senderId === session?.data?.user?.id
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
                 >
                   <div
-                    className={`max-w-xs px-4 py-2 rounded-lg ${message.senderId === session?.data?.user?.id ? "bg-gray-200 text-gray-800" : "bg-blue-500 text-white"}`}
+                    className={`max-w-xs px-4 py-2 rounded-lg ${
+                      message.senderId === session?.data?.user?.id
+                        ? "bg-gray-200 text-gray-800"
+                        : "bg-blue-500 text-white"
+                    }`}
                   >
                     <p>{message.content}</p>
                     <p className="text-xs mt-1 opacity-75">
