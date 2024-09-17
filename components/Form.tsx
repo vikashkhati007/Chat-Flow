@@ -109,9 +109,7 @@ const Form = ({ type }: any) => {
               />
             </div>
             {errors.name && (
-              <span className="text-red-500 text-xs">
-                {errors.name.message}
-              </span>
+              <span className="text-red-500 text-xs">{errors.name.message}</span>
             )}
           </div>
         )}
@@ -123,8 +121,10 @@ const Form = ({ type }: any) => {
               val={{
                 ...register("email", {
                   required: "Email is Required",
-                  validate: (value) =>
-                    value.length >= 3 || "Email must be at least 3 characters",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Email must be a valid email address",
+                  },
                 }),
               }}
               placeholder="Enter your email"
@@ -138,6 +138,7 @@ const Form = ({ type }: any) => {
             <span className="text-red-500 text-xs">{errors.email.message}</span>
           )}
         </div>
+
         <div>
           <div className="relative overflow-hidden rounded-md flex justify-start items-center">
             <Key className="text-white absolute mx-2" />
@@ -145,9 +146,15 @@ const Form = ({ type }: any) => {
               val={{
                 ...register("password", {
                   required: "Password is Required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
+                  },
                   validate: (value) =>
-                    value.length >= 3 ||
-                    "Password must be at least 3 characters",
+                    /[A-Z]/.test(value) || "Password must contain at least one uppercase letter" &&
+                    /[a-z]/.test(value) || "Password must contain at least one lowercase letter" &&
+                    /[0-9]/.test(value) || "Password must contain at least one number" &&
+                    /[!@#$%^&*]/.test(value) || "Password must contain at least one special character (!@#$%^&*)"
                 }),
               }}
               placeholder="Enter your Password"
@@ -158,11 +165,10 @@ const Form = ({ type }: any) => {
             />
           </div>
           {errors.password && (
-            <span className="text-red-500 text-xs">
-              {errors.password.message}
-            </span>
+            <span className="text-red-500 text-xs">{errors.password.message}</span>
           )}
         </div>
+
         {type === "register" && (
           <div>
             <div className="relative overflow-hidden rounded-md flex justify-start items-center">
@@ -183,9 +189,7 @@ const Form = ({ type }: any) => {
               />
             </div>
             {errors.confirmpassword && (
-              <span className="text-red-500 text-xs">
-                {errors.confirmpassword.message}
-              </span>
+              <span className="text-red-500 text-xs">{errors.confirmpassword.message}</span>
             )}
           </div>
         )}
