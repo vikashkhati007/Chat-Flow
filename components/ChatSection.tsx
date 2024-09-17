@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { Conversation, Message, UserProfile } from "@/types/types";
 import { timeAgo } from "@/lib/time";
 import Pusher from "pusher-js";
+import { CircleCheck, CheckCircle } from "lucide-react";
 
 export default function ChatSection(users: any, chatsusers: any) {
   const [activeConversation, setActiveConversation] =
@@ -18,6 +19,7 @@ export default function ChatSection(users: any, chatsusers: any) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search input
+  const [onlineStatus, setOnlineStatus] = useState(false);
   const pathname = usePathname();
   const session: any = useSession();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
@@ -39,6 +41,13 @@ export default function ChatSection(users: any, chatsusers: any) {
         setLoading(true);
         setError(null); // Reset error state
         try {
+          const pusherClient = new Pusher(
+            process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
+            {
+              cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+            }
+          );
+
           const url = `${process.env.NEXT_PUBLIC_WEB_URL}/api/message/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
           const response = await fetch(url, { method: "GET" });
 
@@ -49,17 +58,12 @@ export default function ChatSection(users: any, chatsusers: any) {
           const messages = await response.json();
           setMessages(messages);
 
-         const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-            cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-          });
-
           const channelName = `${[currentUserId, otherUserId]
             .sort()
             .join("-")}`;
           const channel = pusherClient.subscribe(channelName);
 
           channel.bind("new-message", function (data: any) {
-            console.log("Received data:", data); // Debugging
             setMessages((prevMessages) => [...prevMessages, data.message]);
           });
         } catch (error: any) {
@@ -161,7 +165,9 @@ export default function ChatSection(users: any, chatsusers: any) {
               </Avatar>
               <div className="ml-4">
                 <h2 className="font-semibold">{activeConversation.name}</h2>
-                <span className="text-sm text-blue-600">VIP</span>
+                <span className="text-sm text-blue-600">
+                  {onlineStatus ? "online" : "offline"}
+                </span>
               </div>
             </div>
             <div
@@ -187,9 +193,21 @@ export default function ChatSection(users: any, chatsusers: any) {
                     }`}
                   >
                     <p>{message.content}</p>
-                    <p className="text-xs mt-1 opacity-75">
-                      {timeAgo(message.createdAt)}
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs mt-1 opacity-75">
+                        {timeAgo(message.createdAt)}
+                      </p>
+                      {/* Seen/Not Seen indicator */}
+                      {message.senderId === session?.data?.user?.id && (
+                        <p className="text-xs mt-1">
+                          {message.seen ? (
+                            <CheckCircle className="w-4 h-4 text-blue-500" />
+                          ) : (
+                            <CircleCheck className="w-4 h-4 opacity-50" />
+                          )}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

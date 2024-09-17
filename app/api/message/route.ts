@@ -74,6 +74,16 @@ export async function GET(req: Request, res: Response) {
   }
 
   try {
+    await prisma.message.updateMany({
+      where: {
+        senderId: otherUserId, // Only update the other user's messages
+        receiverId: currentUserId, // Ensuring it's received by current user
+        seen: false, // Only update if not already seen
+      },
+      data: {
+        seen: true, // Set seen to true
+      },
+    });
     // Fetch messages exchanged between the two users
     const messages = await prisma.message.findMany({
       where: {

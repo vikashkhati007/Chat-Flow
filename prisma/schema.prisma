@@ -17,6 +17,7 @@ model User {
   profileImage     String    @default("") // Default empty string for profile image
   messagesSent     Message[] @relation("MessagesSent")
   messagesReceived Message[] @relation("MessagesReceived")
+  onlinestatus     Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }
@@ -28,5 +29,6 @@ model Message {
   receiver   User     @relation("MessagesReceived", fields: [receiverId], references: [id])
   receiverId String   @db.ObjectId // Using ObjectId as String with native type
   content    String
+  seen      Boolean  @default(false)
   createdAt  DateTime @default(now())
 }
