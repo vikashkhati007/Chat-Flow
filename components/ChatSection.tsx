@@ -8,8 +8,8 @@ import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { Conversation, Message, UserProfile } from "@/types/types";
 import { timeAgo } from "@/lib/time";
-import Pusher from "pusher-js";
-import { CircleCheck, CheckCircle } from "lucide-react";
+import { CircleCheck, CheckCircle, Dot } from "lucide-react";
+import { pusherClient } from "@/lib/pusher";
 
 export default function ChatSection(users: any, chatsusers: any) {
   const [activeConversation, setActiveConversation] =
@@ -25,10 +25,36 @@ export default function ChatSection(users: any, chatsusers: any) {
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    setInterval(async () => {
+      if (!onlineStatus) {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_WEB_URL}/api/userstatus/`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: session?.data?.user?.email,
+            }),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (res.ok) {
+          const channelName = `user-status-${session?.data?.user?.email}`;
+          const channel = pusherClient.subscribe(channelName);
+
+          channel.bind("online-status", function (data: any) {
+            setOnlineStatus(data.user.onlinestatus);
+          });
+        }
+      }
+    }, 10000);
+  }, []);
+
+  useEffect(() => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTop =
         messageContainerRef.current.scrollHeight;
     }
+    //user status update
   }, [messages]);
 
   useEffect(() => {
@@ -41,13 +67,6 @@ export default function ChatSection(users: any, chatsusers: any) {
         setLoading(true);
         setError(null); // Reset error state
         try {
-          const pusherClient = new Pusher(
-            process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
-            {
-              cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-            }
-          );
-
           const url = `${process.env.NEXT_PUBLIC_WEB_URL}/api/message/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
           const response = await fetch(url, { method: "GET" });
 
@@ -126,23 +145,32 @@ export default function ChatSection(users: any, chatsusers: any) {
           {filteredUsers.length > 0 ? (
             filteredUsers.map((u: UserProfile) => (
               <div
-                key={u.id}
-                className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
-                  activeConversation?.id === u.id ? "bg-blue-50" : ""
-                }`}
-                // @ts-ignore
-                onClick={() => setActiveConversation(u)}
-              >
-                <Avatar className="h-10 w-10">
+              key={u.id}
+              className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
+                activeConversation?.id === u.id ? "bg-blue-50" : ""
+              }`}
+              onClick={() => setActiveConversation(u)}
+            >
+              <div className="relative">
+                <Avatar className="h-10 w-10 border">
                   <AvatarImage src={u.profileImage} alt={u.name} />
                   <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div className="ml-4 flex-1">
-                  <div className="flex justify-between">
-                    <h3 className="font-semibold">{u.name}</h3>
-                  </div>
+                <span
+                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                    onlineStatus ? "bg-green-500" : "bg-gray-400"
+                  } transition-colors duration-300 ease-in-out`}
+                  aria-label={onlineStatus ? "Online" : "Offline"}
+                />
+              </div>
+              <div className="ml-4 flex-1">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold">{u.name}</h3>
+                  {/* Optional: Add last message time or other info */}
+                  {/* <span className="text-sm text-gray-500">{lastMessageTime}</span> */}
                 </div>
               </div>
+            </div>
             ))
           ) : (
             <div className="p-4 text-gray-500">No users available</div>
@@ -153,16 +181,25 @@ export default function ChatSection(users: any, chatsusers: any) {
         {activeConversation ? (
           <>
             <div className="p-4 border-b bg-white flex items-center">
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  // @ts-ignore
-                  src={activeConversation.profileImage}
-                  alt={activeConversation.name}
+              <div className="relative flex items-center">
+                <Avatar className="h-12 w-12 rounded-full border border-gray-300 bg-white">
+                  <AvatarImage
+                    // @ts-ignore
+                    src={activeConversation.profileImage}
+                    alt={activeConversation.name}
+                    className="object-cover rounded-full"
+                  />
+                  <AvatarFallback className="text-xl font-bold">
+                    {activeConversation.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <span
+                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                    onlineStatus ? "bg-green-500" : "bg-gray-400"
+                  } transition-colors duration-300 ease-in-out`}
+                  aria-label={onlineStatus ? "Online" : "Offline"}
                 />
-                <AvatarFallback>
-                  {activeConversation.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+              </div>
               <div className="ml-4">
                 <h2 className="font-semibold">{activeConversation.name}</h2>
                 <span className="text-sm text-blue-600">
