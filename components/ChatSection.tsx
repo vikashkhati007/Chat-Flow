@@ -26,7 +26,7 @@ export default function ChatSection(users: any, chatsusers: any) {
   
   //handle offline we need to update the user status
   useEffect(() => {
-    setInterval(async () => {
+    const intervalId = setInterval(async () => {
       if (!onlineStatus) {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_WEB_URL}/api/userstatus/`,
@@ -34,21 +34,38 @@ export default function ChatSection(users: any, chatsusers: any) {
             method: "POST",
             body: JSON.stringify({
               email: session?.data?.user?.email,
+              status: "online", // Send online status
             }),
             headers: { "Content-Type": "application/json" },
           }
         );
+
         if (res.ok) {
           const channelName = `user-status-${session?.data?.user?.email}`;
           const channel = pusherClient.subscribe(channelName);
 
-          channel.bind("online-status", function (data: any) {
+          channel.bind("online-status", function (data:any) {
             setOnlineStatus(data.user.onlinestatus);
           });
         }
       }
     }, 10000);
-  }, []);
+
+    // Cleanup function to handle user going offline
+    return () => {
+      clearInterval(intervalId);
+      if (onlineStatus) {
+        fetch(`${process.env.NEXT_PUBLIC_WEB_URL}/api/userstatus/`, {
+          method: "POST",
+          body: JSON.stringify({
+            email: session?.data?.user?.email,
+            status: "offline", // Send offline status
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    };
+  }, [onlineStatus, session]);
 
   useEffect(() => {
     if (messageContainerRef.current) {

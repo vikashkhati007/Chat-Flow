@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       email,
     },
     data: {
-      onlinestatus: status ? true : false,
+      onlinestatus: status === "online" ? true : false,
     },
   });
   if (!user) {
