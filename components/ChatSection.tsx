@@ -23,7 +23,8 @@ export default function ChatSection(users: any, chatsusers: any) {
   const pathname = usePathname();
   const session: any = useSession();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
-
+  
+  //handle offline we need to update the user status
   useEffect(() => {
     setInterval(async () => {
       if (!onlineStatus) {
@@ -149,6 +150,7 @@ export default function ChatSection(users: any, chatsusers: any) {
               className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
                 activeConversation?.id === u.id ? "bg-blue-50" : ""
               }`}
+              // @ts-ignore
               onClick={() => setActiveConversation(u)}
             >
               <div className="relative">
@@ -237,7 +239,9 @@ export default function ChatSection(users: any, chatsusers: any) {
                       {/* Seen/Not Seen indicator */}
                       {message.senderId === session?.data?.user?.id && (
                         <p className="text-xs mt-1">
-                          {message.seen ? (
+                          {
+                            // @ts-ignore
+                          message.seen ? (
                             <CheckCircle className="w-4 h-4 text-blue-500" />
                           ) : (
                             <CircleCheck className="w-4 h-4 opacity-50" />

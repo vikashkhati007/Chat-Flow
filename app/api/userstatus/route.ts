@@ -3,17 +3,19 @@ import { prisma } from "@/prisma/db";
 import { pusherServer } from "@/lib/pusher";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const { email } = await req.json();
+  const { email, status } = await req.json();
+  console.log(email, status);
 
   if (!email) {
     return NextResponse.json({ error: "Email is required" }, { status: 400 });
   }
+
   const user = await prisma.user.update({
     where: {
       email,
     },
     data: {
-      onlinestatus: true,
+      onlinestatus: status ? true : false,
     },
   });
   if (!user) {
