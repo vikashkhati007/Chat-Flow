@@ -37,12 +37,14 @@ export type Conversation = {
   time: string;
   unread?: boolean;
   email: string;
+  onlinestatus: boolean;
 };
 
 export interface UserProfile {
   id: number;
   name: string;
   profileImage: string;
+  onlinestatus?: boolean;
 }
 
 export type Message = {
