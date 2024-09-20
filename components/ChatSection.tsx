@@ -23,7 +23,8 @@ export default function ChatSection(users: any, chatsusers: any) {
   const pathname = usePathname();
   const session: any = useSession();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
-  
+  const [unreadMessages, setUnreadMessages] = useState<any>([]);
+
   //handle offline we need to update the user status
   useEffect(() => {
     const intervalId = setInterval(async () => {
@@ -34,6 +35,7 @@ export default function ChatSection(users: any, chatsusers: any) {
             method: "POST",
             body: JSON.stringify({
               email: session?.data?.user?.email,
+              userid: session?.data?.user?.id,
               status: "online", // Send online status
             }),
             headers: { "Content-Type": "application/json" },
@@ -41,11 +43,17 @@ export default function ChatSection(users: any, chatsusers: any) {
         );
 
         if (res.ok) {
-          const channelName = `user-status-${session?.data?.user?.email}`;
-          const channel = pusherClient.subscribe(channelName);
+          const channelName = `user-status-${session?.data?.user?.id}`;
+          const userstatus = pusherClient.subscribe(channelName);
 
-          channel.bind("online-status", function (data:any) {
+          userstatus.bind("online-status", function (data: any) {
             setOnlineStatus(data.user.onlinestatus);
+          });
+
+          const unreadChannelName = `user-message-${session?.data?.user?.id}`;
+          const unreadmessage = pusherClient.subscribe(unreadChannelName);
+          unreadmessage.bind("unread-message", function (data: any) {
+            setUnreadMessages(data.user);
           });
         }
       }
@@ -163,33 +171,42 @@ export default function ChatSection(users: any, chatsusers: any) {
           {filteredUsers.length > 0 ? (
             filteredUsers.map((u: UserProfile) => (
               <div
-              key={u.id}
-              className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
-                activeConversation?.id === u.id ? "bg-blue-50" : ""
-              }`}
-              // @ts-ignore
-              onClick={() => setActiveConversation(u)}
-            >
-              <div className="relative">
-                <Avatar className="h-10 w-10 border">
-                  <AvatarImage src={u.profileImage} alt={u.name} />
-                  <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <span
-                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                    onlineStatus ? "bg-green-500" : "bg-gray-400"
-                  } transition-colors duration-300 ease-in-out`}
-                  aria-label={onlineStatus ? "Online" : "Offline"}
-                />
-              </div>
-              <div className="ml-4 flex-1">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-semibold">{u.name}</h3>
-                  {/* Optional: Add last message time or other info */}
-                  {/* <span className="text-sm text-gray-500">{lastMessageTime}</span> */}
+                key={u.id}
+                className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 ${
+                  activeConversation?.id === u.id ? "bg-blue-50" : ""
+                }`}
+                // @ts-ignore
+                onClick={() => setActiveConversation(u)}
+              >
+                <div className="relative">
+                  <Avatar className="h-10 w-10 border">
+                    <AvatarImage src={u.profileImage} alt={u.name} />
+                    <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                      onlineStatus ? "bg-green-500" : "bg-gray-400"
+                    } transition-colors duration-300 ease-in-out`}
+                    aria-label={onlineStatus ? "Online" : "Offline"}
+                  />
+                </div>
+                <div className="ml-4 flex-1">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold">{u.name}</h3>
+                    {unreadMessages.filter(
+                      (message: any) => message.senderId === u.id
+                    ).length > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1 ">
+                        {
+                          unreadMessages.filter(
+                            (message: any) => message.senderId === u.id
+                          ).length
+                        }
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
             ))
           ) : (
             <div className="p-4 text-gray-500">No users available</div>
@@ -258,11 +275,12 @@ export default function ChatSection(users: any, chatsusers: any) {
                         <p className="text-xs mt-1">
                           {
                             // @ts-ignore
-                          message.seen ? (
-                            <CheckCircle className="w-4 h-4 text-blue-500" />
-                          ) : (
-                            <CircleCheck className="w-4 h-4 opacity-50" />
-                          )}
+                            message.seen ? (
+                              <CheckCircle className="w-4 h-4 text-blue-500" />
+                            ) : (
+                              <CircleCheck className="w-4 h-4 opacity-50" />
+                            )
+                          }
                         </p>
                       )}
                     </div>
