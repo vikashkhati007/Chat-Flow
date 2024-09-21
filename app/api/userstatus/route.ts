@@ -20,7 +20,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       },
     });
 
-    const getAllUsers = await prisma.user.findMany();
     const unreadMessages = await prisma.message.findMany({
       where: {
         receiverId: userid, // Using userid for messages
@@ -35,7 +34,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       const unreadChannelName = `user-message-${userid}`;
       await pusherServer.trigger(unreadChannelName, "unread-message", {
         unreadmessage: unreadMessages, // Send unread messages
-        users: getAllUsers
       });
     }
     

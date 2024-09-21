@@ -46,7 +46,7 @@ export default function ChatSection(users: any, chatsusers: any) {
         const unreadChannelName = `user-message-${session?.data?.user?.id}`;
         const unreadmessage = pusherClient.subscribe(unreadChannelName);
         unreadmessage.bind("unread-message", function (data: any) {
-          setUnreadMessages(data.user);
+          setUnreadMessages(data.unreadmessage);
         });
       }
     };
