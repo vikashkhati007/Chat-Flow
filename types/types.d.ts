@@ -42,6 +42,7 @@ export type Conversation = {
 
 export interface UserProfile {
   id: number;
+  email: string;
   name: string;
   profileImage: string;
   onlinestatus?: boolean;
