@@ -24,8 +24,10 @@ export default function ChatSection(users: any, chatsusers: any) {
   const session: any = useSession();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [unreadMessages, setUnreadMessages] = useState<any>([]);
+  const [notification, setNotification] = useState<any>(false);
 
   // handle offline we need to update the user status and unread messages
+
   useEffect(() => {
     const updateUserStatus = async (status: any) => {
       const res = await fetch(
@@ -139,6 +141,7 @@ export default function ChatSection(users: any, chatsusers: any) {
     );
 
     if (response.ok) {
+      const res = await response.json();
       setContent("");
       console.log("Message sent successfully");
     }

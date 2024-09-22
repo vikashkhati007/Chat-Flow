@@ -38,14 +38,13 @@ export async function POST(req: Request, res: Response) {
         receiver: true,
       },
     });
-
+    
     if (message) {
       const channelName = `${[senderId, receiverId].sort().join('-')}`;
 
       await pusherServer.trigger(channelName, 'new-message', {
         message: message // The message payload
       });
-
      
     }
     // Pusher event to notify the client that a message has been sent
