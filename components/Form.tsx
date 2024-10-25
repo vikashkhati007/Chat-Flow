@@ -150,11 +150,16 @@ const Form = ({ type }: any) => {
                     value: 6,
                     message: "Password must be at least 6 characters long",
                   },
-                  validate: (value) =>
-                    /[A-Z]/.test(value) || "Password must contain at least one uppercase letter" &&
-                    /[a-z]/.test(value) || "Password must contain at least one lowercase letter" &&
-                    /[0-9]/.test(value) || "Password must contain at least one number" &&
-                    /[!@#$%^&*]/.test(value) || "Password must contain at least one special character (!@#$%^&*)"
+                  validate: {
+                    hasUpperCase: (value) =>
+                      /[A-Z]/.test(value) || "Password must contain at least one uppercase letter",
+                    hasLowerCase: (value) =>
+                      /[a-z]/.test(value) || "Password must contain at least one lowercase letter",
+                    hasNumber: (value) =>
+                      /[0-9]/.test(value) || "Password must contain at least one number",
+                    hasSpecialChar: (value) =>
+                      /[!@#$%^&*]/.test(value) || "Password must contain at least one special character (!@#$%^&*)"
+                  }
                 }),
               }}
               placeholder="Enter your Password"
