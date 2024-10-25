@@ -33,7 +33,7 @@ const Form = ({ type }: any) => {
   const onSubmit = async (data: any) => {
     if (type === "register") {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_WEB_URL}/api/auth/register`,
+        `/api/auth/register`,
         {
           method: "POST",
           headers: {

@@ -31,7 +31,7 @@ export default function ChatSection(users: any, chatsusers: any) {
   useEffect(() => {
     const updateUserStatus = async (status: any) => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_WEB_URL}/api/userstatus/`,
+        `/api/userstatus/`,
         {
           method: "POST",
           body: JSON.stringify({
@@ -97,7 +97,7 @@ export default function ChatSection(users: any, chatsusers: any) {
         setLoading(true);
         setError(null); // Reset error state
         try {
-          const url = `${process.env.NEXT_PUBLIC_WEB_URL}/api/message/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
+          const url = `/api/message/?currentUserId=${currentUserId}&otherUserId=${otherUserId}`;
           const response = await fetch(url, { method: "GET" });
 
           if (!response.ok) {
@@ -128,7 +128,7 @@ export default function ChatSection(users: any, chatsusers: any) {
 
   const handleSendMessage = async (formdata: FormData) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_WEB_URL}/api/message/`,
+      `/api/message/`,
       {
         method: "POST",
         body: JSON.stringify({
