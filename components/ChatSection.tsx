@@ -24,60 +24,78 @@ export default function ChatSection(users: any, chatsusers: any) {
   const session: any = useSession();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [unreadMessages, setUnreadMessages] = useState<any>([]);
-  const [notification, setNotification] = useState<any>(false);
 
   // handle offline we need to update the user status and unread messages
 
+
   useEffect(() => {
-    const updateUserStatus = async (status: any) => {
-      const res = await fetch(
-        `/api/userstatus/`,
-        {
-          method: "POST",
+    const updateUserStatus = async (status: 'online' | 'offline') => {
+      if (!session?.data?.user?.email || !session?.data?.user?.id) return
+
+      try {
+        const res = await fetch('/api/userstatus', {
+          method: 'POST',
           body: JSON.stringify({
-            email: session?.data?.user?.email,
-            userid: session?.data?.user?.id,
+            email: session.data.user.email,
+            userid: session.data.user.id,
             status,
           }),
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
+        })
+
+        if (res.ok) {
+          setOnlineStatus(status === 'online')
+          if (status === 'online') {
+            subscribeToUnreadMessages()
+          } else {
+            unsubscribeFromUnreadMessages()
+          }
+        } else {
+          console.error('Failed to update user status')
         }
-      );
-
-      if (res.ok) {
-        // Subscribe to unread messages channel
-        const unreadChannelName = `user-message-${session?.data?.user?.id}`;
-        const unreadmessage = pusherClient.subscribe(unreadChannelName);
-        unreadmessage.bind("unread-message", function (data: any) {
-          setUnreadMessages(data.unreadmessage);
-        });
+      } catch (error) {
+        console.error('Error updating user status:', error)
       }
-    };
+    }
 
-    // Set interval for periodic updates
-    const intervalId = setInterval(async () => {
-      if (!document.hidden && onlineStatus) {
-        await updateUserStatus("online");
+    const subscribeToUnreadMessages = () => {
+      const unreadChannelName = `user-message-${session.data.user.id}`
+      const unreadChannel = pusherClient.subscribe(unreadChannelName)
+      unreadChannel.bind('unread-message', (data: { unreadmessage: any[] }) => {
+        setUnreadMessages(data.unreadmessage)
+      })
+    }
+
+    const unsubscribeFromUnreadMessages = () => {
+      const unreadChannelName = `user-message-${session.data.user.id}`
+      pusherClient.unsubscribe(unreadChannelName)
+    }
+
+    const handleVisibilityChange = () => {
+      const newStatus = document.visibilityState === 'visible' ? 'online' : 'offline'
+      updateUserStatus(newStatus)
+    }
+    const newStatus = document.visibilityState === 'visible' ? 'online' : 'offline'
+
+    console.log('session', newStatus) 
+
+    const intervalId = setInterval(() => {
+      if (!document.hidden) {
+        updateUserStatus('online')
       }
-    }, 10000);
+    }, 60000) // Update every minute when the tab is visible
 
-    // Handle visibility change
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === "hidden") {
-        await updateUserStatus("offline");
-      } else {
-        await updateUserStatus("online");
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    updateUserStatus('online') // Set initial status
 
     return () => {
-      clearInterval(intervalId);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      // Optionally, you can set the user to offline on unmount
-      updateUserStatus("offline");
-    };
-  }, [session, onlineStatus]);
+      clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      updateUserStatus('offline')
+      unsubscribeFromUnreadMessages()
+    }
+  }, [session])
+
 
   useEffect(() => {
     if (messageContainerRef.current) {
