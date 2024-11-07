@@ -1,6 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { Users, MessageSquare, LayoutDashboard, LogOutIcon } from "lucide-react";
+import {
+  Users,
+  MessageSquare,
+  LayoutDashboard,
+  LogOutIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -58,8 +63,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState<string>(pathname);
   const user = useSession();
-  const fullname: string = user.data?.user.name ?? 'loading';
-
+  const fullname: string = user.data?.user.name ?? "loading";
   return (
     <div className="w-64 h-screen bg-white border-r flex flex-col">
       <div className="p-4">
@@ -78,25 +82,26 @@ export default function Sidebar() {
         </ul>
       </nav>
       <div className="w-full">
-        <Dashboard/>
+        <Dashboard />
       </div>
       <div className="p-4 border-t flex items-center gap-2 relative ">
         <Avatar>
           <AvatarImage
-          // @ts-ignore
+            // @ts-ignore
             src={user.data?.user.profileImage}
             alt={user.data?.user.name!}
           />
           <AvatarFallback>{fullname.charAt(0)}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-semibold text-sm text-gray-800">
-            {fullname}
-          </p>
+          <p className="font-semibold text-sm text-gray-800">{fullname}</p>
           <p className="text-xs text-gray-500">Welcome</p>
         </div>
         <div className="signout absolute right-2 cursor-pointer ">
-        <LogOutIcon width={20} onClick={() => signOut({ callbackUrl: '/' })}/>
+          <LogOutIcon
+            width={20}
+            onClick={() => signOut({ callbackUrl: "/" })}
+          />
         </div>
       </div>
     </div>

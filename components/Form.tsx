@@ -19,6 +19,7 @@ type Inputs = {
 
 const Form = ({ type }: any) => {
   const [name, setname] = useState("");
+  const [profile, setProfile] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
@@ -48,7 +49,7 @@ const Form = ({ type }: any) => {
           title: "Registration Completed",
           description: "You have been successfully registered",
         });
-        router.push("/");
+        router.push("/setprofile?email=" + data.email);
       } else {
         toast({
           title: "Registration Failed",
